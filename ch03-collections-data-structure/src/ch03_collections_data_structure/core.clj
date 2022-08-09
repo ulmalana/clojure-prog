@@ -31,3 +31,9 @@
          (random-ints limit))))
 
 (def rands (take 10 (random-ints 50)))
+
+;; associative
+(def m {:a 1, :b 2, :c 3})
+
+;; sorted
+(def sm (sorted-map :z 5 :x 9 :y 0 :b 2 :a 3 :c 4))
