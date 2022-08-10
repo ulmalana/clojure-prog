@@ -77,3 +77,25 @@ sm
 (rsubseq sm > :b <= :y)
 ; => ([:y 0] [:x 9] [:c 4])
 ```
+
+## Data Structures
+
+### List
+* Simplest collection type.
+* **Singly linked list**, only efficient by accessing the head with `conj`  or `rest`.
+* **Doesnt support efficient random access**. `nth` will have linear time.
+* **Doesnt support** `get`
+
+### Vector
+* Support **efficient random access**.
+* Has associative, indexed, and stack abstraction.
+* Best kept hidden and not exposed it as tuples (use maps instead) because:
+  * not self-documenting. we have to remember the role of each index.
+  * inflexible.
+  
+### Sets
+* **Cant contain duplicates**.
+
+### Maps
+* **Key-value pairs**.
+* Cant contain **duplicated key**.
