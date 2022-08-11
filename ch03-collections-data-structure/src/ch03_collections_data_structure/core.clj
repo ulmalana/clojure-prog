@@ -97,3 +97,21 @@
    {:product "Hole" :customer "Wile Coyote" :qty 1 :total 1000}
    {:product "Anvil" :customer "Elmer Fudd" :qty 2 :total 300}
    {:product "Anvil" :customer "Wile Coyote" :qty 6 :total 900}])
+
+
+;; transient: reference to old values may change as well
+(def x (transient []))
+(def y (conj! x 1))
+
+(count y) ; => 1
+(count x) ; => 1, because x follows y.
+
+;; naive into
+(defn naive-into
+  [coll source]
+  (reduce conj coll source))
+
+;; faster than naive into
+(defn faster-into
+  [coll source]
+  (persistent! (reduce conj! (transient coll) source)))
