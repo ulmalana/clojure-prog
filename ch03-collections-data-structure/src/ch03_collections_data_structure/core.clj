@@ -1,4 +1,5 @@
 (ns ch03-collections-data-structure.core
+  (:require [clojure.zip :as z])
   (:gen-class))
 
 (defn -main
@@ -377,3 +378,78 @@
                            (* 20 (inc w)) (* 20 (+ 0.5 h))))))
     .pack
     (.setVisible true)))
+
+
+(defn html-zip
+  [root]
+  (z/zipper
+   vector?
+   (fn [[tagname & xs]]
+     (if (map? (first xs)) (next xs) xs))
+   (fn [[tagname & xs] children]
+     (into (if (map? (first xs)) [tagname (first xs)] [tagname])
+           children))
+   root))
+
+(defn wrap
+  "Wraps the current ndoe in the specified tag and attributes."
+  ([loc tag]
+   (z/edit loc #(vector tag %)))
+  ([loc tag attrs]
+   (z/edit loc #(vector tag attrs %))))
+
+(defn ariadne-zip
+  [labyrinth loc]
+  (let [paths (reduce (fn [index [a b]]
+                        (merge-with into index {a [b] b [a]}))
+                      {}
+                      (map seq labyrinth))
+        children (fn [[from to]]
+                   (seq (for [loc (paths to)
+                              :when (not= loc from)]
+                          [to loc])))]
+    (z/zipper (constantly true)
+              children
+              nil
+              [nil loc])))
+
+
+(defn draw-labyrinth
+  [w h maze path]
+  (doto (javax.swing.JFrame. "Labyrinth")
+    (.setContentPane
+     (doto (proxy [javax.swing.JPanel] []
+             (paintComponent [^java.awt.Graphics g]
+               (let [g (doto ^java.awt.Graphics2D (.create g)
+                         (.scale 10 10)
+                         (.translate 1.5 1.5)
+                         (.setStroke (java.awt.BasicStroke. 0.4)))]
+                 (.drawRect g -1 -1 w h)
+                 (doseq [[[xa ya] [xb yb]] (map sort maze)]
+                   (let [[xc yc] (if (= xa xb)
+                                   [(dec xa) ya]
+                                   [xa (dec ya)])]
+                     (.drawLine g xa ya xc yc)))
+                 (.translate g -0.5 -0.5)
+                 (.setColor g java.awt.Color/RED)
+                 (doseq [[[xa ya] [xb yb]] path]
+                   (.drawLine g xa ya xb yb)))))
+       (.setPreferredSize (java.awt.Dimension.
+                           (* 10 (inc w)) (* 10 (inc h))))))
+    .pack
+    (.setVisible true)))
+
+;; draw the labyrinth and the path
+(let [w 40, h 40
+      grid (grid w h)
+      walls (maze grid)
+      labyrinth (reduce disj grid walls)
+      places (distinct (apply concat labyrinth))
+      theseus (rand-nth places)
+      minotaur (rand-nth places)
+      path (->> theseus
+                (ariadne-zip labyrinth)
+                (iterate z/next)
+                (filter #(= minotaur (first (z/node %))))
+                first z/path rest)]
+  (draw-labyrinth w h walls path))
