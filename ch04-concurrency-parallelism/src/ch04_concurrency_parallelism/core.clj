@@ -56,3 +56,39 @@
     (let [result (promise)]
       (apply async-fn (conj (vec args) #(deliver result %&)))
       @result)))
+
+;; parallelism
+(defn phone-number
+  [string]
+  (re-seq #"(\d{3})[\.-]?(\d{3})[\.-]?(\d{4})" string))
+
+;; simulate a dummy file
+(def files (repeat 100
+                   (apply str
+                          (concat (repeat 1000000 \space)
+                                  "Sunil: 617.444.2945, Berry: 234.948.4423"))))
+
+;; get phone number from files
+(time (dorun (map phone-number files)))
+
+;; parallelize getting phone number from files
+(time (dorun (pmap phone-number files)))
+
+;; chunking (partitioning) dataset for parallelization
+(time (->> files
+           (partition-all 250)
+           (pmap (fn [chunk] (doall (map phone-number chunk))))
+           (apply concat)
+           dorun))
+
+;; some helper macros
+(defmacro futures
+  [n & exprs]
+  (vec (for [_ (range n)
+             expr exprs]
+         `(future ~expr))))
+
+(defmacro wait-futures
+  [& args]
+  `(doseq [f# (futures ~@args)]
+     @f#))

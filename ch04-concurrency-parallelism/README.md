@@ -25,3 +25,30 @@ Futures' advantages:
 ### Promises
 
 With `promise`, we can create something with defining it (eg. like creating **an empty box/container**). At some later point, we **can deliver** something to `promise` to fulfill it.
+
+## Clojure Reference Types
+
+There are four reference types which are similar to boxes that hold a value, where **that value can be changed**: `var`, `ref`, `agent`, and `atom`. Derefing will return a *snapshot* of the state and it will not block (unlike `delay`, `promise`, and `future`).
+
+All reference types:
+* maybe decorated with metadata.
+* can notify functions when their state changes (*watches*).
+* can enforce constraints on the state (*validator*).
+
+## Classifying concurrent operations
+
+### Coordinated
+A coordinated operation is one where **multiple actors must cooperate to yield correct results**. Example: bacnk transaction.
+
+An **uncoordinated** operation is one where **multiple actors cannot impact each other negatively** because their contexts are **separated**.
+
+### Synchronization
+
+**Synchronous** operations are those where the caller's thread **waits or blocks or sleeps** until it has exclusive access.
+
+Asynchronous operations are those that can be **started or scheduled without blocking**.
+
+|     | **Coordinated** | **Uncoordinated** |
+| --- | --- | --- |
+| **Synchronous** | `ref` | `atom` |
+| **Asynchronous** | - | `agent` |
