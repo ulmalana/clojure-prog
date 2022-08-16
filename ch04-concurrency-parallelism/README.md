@@ -1,4 +1,4 @@
-# Chapter 04 - Concurrency Parallelism
+# Chapter 04 - Concurrency Parallelise
 
 ## Shifting computation through time and space
 
@@ -70,3 +70,11 @@ We can use watches to **observe any change** in reference types. It is just a fu
 ## Validators
 
 Validators can be used to constrain a reference's state. It will check if the **proposed value** is still accepted. If it is not, then there will be no change. We can insert one-argument function with `:validator` key when creating a reference.
+
+## Refs
+
+* **Coordinated** reference type. Can be used to manipulate multiple identites.
+* Refs are useful for handling **Software Transactional Memory (STM)** Every transaction is first established with `dosync` and must be performed inside it.
+* There are two functions to change the state: `alter` and `commute`.
+* `alter` guarantees **in-order** transcation with the price of retrying.
+* `commute` doesnt have retries but with the price of **inconsistent data**.
