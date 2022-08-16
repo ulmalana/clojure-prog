@@ -52,3 +52,21 @@ Asynchronous operations are those that can be **started or scheduled without blo
 | --- | --- | --- |
 | **Synchronous** | `ref` | `atom` |
 | **Asynchronous** | - | `agent` |
+
+## Atoms
+
+* Most basic reference type
+* **Synchronous and uncoordinated**.
+* Modifying an atom **will block** until modification is complete.
+* Each modification is **isolated** (no way to orchestrate modifying two atoms).
+* `swap!` is used to modify atom with some function.
+* Because of *compare-and-set* semantics, `swap!` will retry when the old value is different.
+* We can `reset!` an atom to certain value.
+
+## Watches
+
+We can use watches to **observe any change** in reference types. It is just a function and we can attach/detach it on reference types with `add-watch` and `remove-watch`.
+
+## Validators
+
+Validators can be used to constrain a reference's state. It will check if the **proposed value** is still accepted. If it is not, then there will be no change. We can insert one-argument function with `:validator` key when creating a reference.

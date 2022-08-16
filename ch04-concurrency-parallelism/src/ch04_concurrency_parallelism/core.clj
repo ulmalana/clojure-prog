@@ -92,3 +92,26 @@
   [& args]
   `(doseq [f# (futures ~@args)]
      @f#))
+
+;; atom
+(def riz (atom {:name "Riz" :age 25 :wears-glasses? true}))
+
+(def xs (atom #{1 2 3}))
+
+;; watch
+
+(defn echo-watch
+  [key identity old new]
+  (println key old "=>" new))
+
+(def history (atom ()))
+
+(defn log->list
+  [dest-atom key source old new]
+  (when (not= old new)
+    (swap! dest-atom conj new)))
+
+;; validator
+;; check if the value in this atom positif.
+;; if negative, then throw an exception.
+(def n (atom 1 :validator pos?))
