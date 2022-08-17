@@ -78,3 +78,26 @@ Validators can be used to constrain a reference's state. It will check if the **
 * There are two functions to change the state: `alter` and `commute`.
 * `alter` guarantees **in-order** transcation with the price of retrying.
 * `commute` doesnt have retries but with the price of **inconsistent data**.
+
+### Sharp corners of STM
+* Side-effections functions are strictly **forbidden**, only run functions that are safe to retry in the STM scope (ex: writing to database. it would be inefficient to retry this function.)
+* **Minimize the scope** of each transaction. Big transactions or computationally expensive ones may affect the performance.
+  * Old transaction can be forced to proceed with **barging**
+
+
+## Vars
+
+Vars can be used to **associate symbols** (functions, values, etc) **and its corresponding objects** in the namespace. We can create a var (or association) with `def`. We can create a private var with specifying `:private` metadata.
+```clj
+(def ^:private everything 45)
+
+; or
+
+(def ^{:private true} everything 45)
+```
+
+We can also set a var to be a **constant** with `^:const`, so that any modification in the future is prohibited.
+
+### Dynamic Scope
+
+We can create a var that has dynamic scope (ie. can be accessed from anywhere. similar to global variables) with `^:dynamic`.

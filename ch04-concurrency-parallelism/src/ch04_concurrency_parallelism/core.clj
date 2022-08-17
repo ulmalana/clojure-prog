@@ -199,3 +199,33 @@
      (when (pos? aid)
        (commute healer update-in [:mana] - (max 5 (/ aid 5)))
        (alter target update-in [:health] + aid)))))
+
+;; var
+
+;; private var with docstring
+(def ^{:private true :doc "this is a private var"}
+  priv-var 45)
+
+;; dynamic var
+(def ^:dynamic *max-value* 255)
+
+(defn http-get
+  [url-string]
+  (let [conn (-> url-string java.net.URL. .openConnection)
+        response-code (.getResponseCode conn)]
+    (if (== 404 response-code)
+      [response-code]
+      [response-code (-> conn .getInputStream slurp)])))
+
+(def ^:dynamic *response-code* nil)
+
+(defn http-get'
+  [url-string]
+  (let [conn (-> url-string java.net.URL. .openConnection)
+        response-code (.getResponseCode conn)]
+    (when (thread-bound? #'*response-code*)
+      (set! *response-code* response-code))
+    (when (not= 404 response-code) (-> conn .getInputStream slurp))))
+
+;; forward declaration with declare instead of def
+(declare val-1 val-2 helper-fn)
