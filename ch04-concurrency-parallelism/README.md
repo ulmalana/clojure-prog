@@ -101,3 +101,9 @@ We can also set a var to be a **constant** with `^:const`, so that any modificat
 ### Dynamic Scope
 
 We can create a var that has dynamic scope (ie. can be accessed from anywhere. similar to global variables) with `^:dynamic`.
+
+## Agents
+
+* **Uncoordinated** and **asynchronous** reference type. IO and other side-effecting functions can be safely used with agent. Agent are also STM-aware. We can change agent's state with `send` and `send-off`.
+
+Agent *action* = `(send/send-off fns args)`

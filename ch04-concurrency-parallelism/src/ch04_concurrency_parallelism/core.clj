@@ -229,3 +229,18 @@
 
 ;; forward declaration with declare instead of def
 (declare val-1 val-2 helper-fn)
+
+;; agent
+
+(def a (agent 500))
+(def a1 (agent 0))
+(def a2 (agent nil))
+(def a3 (agent nil :error-mode :continue))
+(def a4 (agent nil
+               :error-mode :continue
+               :error-handler (fn [the-agent exception]
+                                (.println System/out (.getMessage exception)))))
+
+(comment
+  (send a range 1000)
+  (send a1 inc))
